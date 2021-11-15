@@ -1,3 +1,4 @@
+require('dotenv').config();
 const cors = require('cors');
 const express = require('express');
 const socket = require("socket.io");
@@ -10,11 +11,20 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-const server = app.listen(PORT, console.log(`Server is running on the port no: ${(PORT)} `.green)
+const server = app.listen(PORT, console.log(`Server running on port: ${(PORT)} `.green)
 );
+
+io = socket(server);
+
+io.on('connection', (socket) => {
+  console.log(`new Connection from: ${socket.id}`.green);
+  
+  socket.on('disconnect', () => console.log(`${socket.id} disconnected`));
+});
 
 // app.use('/company', companyRouter);
 // app.use('/clients', clientsRouter);
+
 
 app.use((error, _req, res, _next) => {
   console.log('Final middleware error');
@@ -23,6 +33,3 @@ app.use((error, _req, res, _next) => {
   }
   res.status(500).json({ message: error.message || 'Erro desconhecido ao servidor' });
 });
-
-
-app.listen(PORT, () => console.log(`Escutando porta ${PORT}`));
