@@ -11,6 +11,8 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+app.get('/', () => res.send(`Server running on port: ${(PORT)}`))
+
 const server = app.listen(PORT, console.log(`Server running on port: ${(PORT)} `.green)
 );
 
@@ -18,7 +20,7 @@ io = socket(server);
 
 io.on('connection', (socket) => {
   console.log(`new Connection from: ${socket.id}`.green);
-  
+
   socket.on('disconnect', () => console.log(`${socket.id} disconnected`));
 });
 
