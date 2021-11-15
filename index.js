@@ -1,6 +1,7 @@
 const cors = require('cors');
 const express = require('express');
-require('dotenv').config()
+const socket = require("socket.io");
+const color = require("colors");
 
 const PORT = process.env.PORT;
 const app = express();
@@ -9,10 +10,8 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-
-app.get('/', (_req, res) => {
-  res.send(`Porta ${PORT} Ok!`);
-});
+const server = app.listen(PORT, console.log(`Server is running on the port no: ${(PORT)} `.green)
+);
 
 // app.use('/company', companyRouter);
 // app.use('/clients', clientsRouter);
