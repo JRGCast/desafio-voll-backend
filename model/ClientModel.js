@@ -23,4 +23,15 @@ const insertOneMessage = async (message) => {
   }
 };
 
-module.exports = { getAllTheMessages, insertOneMessage };
+const resetDb = async () => {
+  try {
+    const db = await connection();
+    const Clients = db.collection('WebchatMessages').deleteMany({});
+    return Clients;
+  } catch (error) {
+    console.log(error);
+    return `Erro: ${error}`;
+  }
+};
+
+module.exports = { getAllTheMessages, insertOneMessage, resetDb };

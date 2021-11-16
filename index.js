@@ -15,20 +15,36 @@ app.use(express.urlencoded({ extended: true }));
 
 server.listen(PORT, console.log(`Server running on port: ${(PORT)} `.green));
 
+const newMessage = (message) => {
+
+};
+
 io.on('connection', (socket) => {
   console.log(`new Connection from: ${socket.id}`);
   socket.emit('connection', null);
 
   socket.on('setName', (givenName) => {
-    socket.emit('setName', givenName);
+    io.emit('setName', (givenName) => console.log(givenName));
+  });
+
+  socket.on('getAllMessages', async () => {
+    io.emit('getAllMessages', async () => {
+      const getting = await clientsModel.getAllTheMessages();
+      return getting;
+    });
   });
 
   socket.on('newMessage', async (message) => {
     await clientsModel.insertOneMessage(message);
-    socket.emit('confirmInsert', (message) => message);
+    io.emit('chatMessage', (message) => console.log(message));
   });
 
   socket.on('disconnect', () => console.log(`${socket.id} disconnected`));
+
+  socket.on('resetDB', async () => {
+    await clientsModel.resetDb();
+    io.emit('chatMessage', (message) => console.log('apagado'));
+  });
 });
 
 
