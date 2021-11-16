@@ -22,6 +22,5 @@ const insertOneMessage = async (username, date, message) => {
     return `Erro: ${error}`;
   }
 };
-}
 
 module.exports = { getAllTheMessages, insertOneMessage };

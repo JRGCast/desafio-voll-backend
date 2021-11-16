@@ -20,7 +20,10 @@ io.on('connection', (socket) => {
   console.log(`new Connection from: ${socket.id}`);
   socket.emit('connection', null);
 
-  socket.on('connection', () => console.log(`${socket.id} connected`));
+  socket.on('setName', (string) => {
+    console.log(string);
+  socket.emit('setName', string)
+  }); 
 
   socket.on('newMessage', () => {
 
