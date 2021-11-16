@@ -1,31 +1,29 @@
 require('dotenv').config();
 const cors = require('cors');
 const express = require('express');
-const socket = require("socket.io");
-const color = require("colors");
+const app = express();
+const server = require('http').createServer();
+const io = require('socket.io')(server, {cors: {}});
+const color = require('colors');
 
 const PORT = process.env.PORT;
-const app = express();
 
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.get('/', () => res.send(`Server running on port: ${(PORT)}`))
+// app.get('/chatpage', (_req, res) => res.send(`get /chatpagr`));
 
-const server = app.listen(PORT, console.log(`Server running on port: ${(PORT)} `.green)
-);
-
-io = socket(server);
+server.listen(PORT, console.log(`Server running on port: ${(PORT)} `.green));
 
 io.on('connection', (socket) => {
-  console.log(`new Connection from: ${socket.id}`.green);
+  console.log(`new Connection from: ${socket.id}`);
+  socket.emit('connection', null);
+
+  socket.on('connection', () => console.log(`${socket.id} connected`));
 
   socket.on('disconnect', () => console.log(`${socket.id} disconnected`));
 });
-
-// app.use('/company', companyRouter);
-// app.use('/clients', clientsRouter);
 
 
 app.use((error, _req, res, _next) => {
