@@ -12,10 +12,10 @@ const getAllTheMessages = async () => {
   }
 };
 
-const insertOneMessage = async (username, date, message) => {
+const insertOneMessage = async (message) => {
   try {
     const db = await connection();
-    const Clients = db.collection('WebchatMessages').insertOne({ username, date, message });
+    const Clients = db.collection('WebchatMessages').insertOne({ message });
     return Clients;
   } catch (error) {
     console.log(error);
