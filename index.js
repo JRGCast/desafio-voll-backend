@@ -3,7 +3,7 @@ const cors = require('cors');
 const express = require('express');
 const app = express();
 const server = require('http').createServer(app);
-const io = require('socket.io')(server, {cors: {}});
+const io = require('socket.io')(server, { cors: {} });
 const color = require('colors');
 
 const PORT = process.env.PORT;
@@ -21,6 +21,10 @@ io.on('connection', (socket) => {
   socket.emit('connection', null);
 
   socket.on('connection', () => console.log(`${socket.id} connected`));
+
+  socket.on('newMessage', () => {
+
+  });
 
   socket.on('disconnect', () => console.log(`${socket.id} disconnected`));
 });
