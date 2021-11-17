@@ -4,10 +4,7 @@ const express = require('express');
 const app = express();
 const server = require('http').createServer(app);
 const io = require('socket.io')(server, {
-  cors: {
-    origin: "http://localhost:3000",
-    methods: ["GET", "POST"]
-  }
+  cors: {}
 });
 const color = require('colors');
 const clientsModel = require('./model/ClientModel');
@@ -17,6 +14,8 @@ const PORT = process.env.PORT;
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// app.get('/', (_req, res) => res.send(`Server OK! Port:${(PORT)} `))
 
 server.listen(PORT, console.log(`Server running on port: ${(PORT)} `.green));
 
@@ -29,14 +28,12 @@ io.on('connection', (socket) => {
   socket.emit('connection', null);
 
   socket.on('setName', (givenName) => {
-    io.emit('setName', (givenName) => console.log(givenName));
-  });
+    io.emit('setName', (givenName));
+  })
 
   socket.on('getAllMessages', async () => {
-    io.emit('getAllMessages', async () => {
-      const getting = await clientsModel.getAllTheMessages();
-      return getting;
-    });
+    const getting = await clientsModel.getAllTheMessages();
+    io.emit('getAllMessages', getting)
   });
 
   socket.on('newMessage', async (message) => {
@@ -48,7 +45,7 @@ io.on('connection', (socket) => {
 
   socket.on('resetDB', async () => {
     await clientsModel.resetDb();
-    io.emit('chatMessage', (message) => console.log('apagado'));
+    io.emit('chatMessage', 'DB APAGADO');
   });
 });
 
