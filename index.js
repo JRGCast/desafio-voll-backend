@@ -43,7 +43,10 @@ io.on('connection', (socket) => {
 
   socket.on('disconnect', () => {
     allConnected.filter(({ socketId }) => socketId !== socket.id);
-    io.emit('getAllConnected', allConnected)
+    console.log('filter', allConnected.filter(({ socketId }) => socketId !== socket.id));
+    const filtered = allConnected.filter(({ socketId }) => socketId === socket.id)
+    io.emit('getAllConnected', filtered)
+    io.emit('chatMessage', `${socket.id} se desconectou`)
     console.log(`${socket.id} disconnected`);
   });
 
