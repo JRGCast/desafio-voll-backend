@@ -19,29 +19,33 @@ app.use(express.urlencoded({ extended: true }));
 
 server.listen(PORT, console.log(`Server running on port: ${(PORT)} `.green));
 
-// const newMessage = (message) => {
-
-// };
+const allConnected = [];
 
 io.on('connection', (socket) => {
   console.log(`new Connection from: ${socket.id}`);
   socket.emit('connection', null);
 
   socket.on('setName', (givenName) => {
-    io.emit('setName', (givenName));
-  })
+    socket.emit('setName', (givenName));
+    allConnected.push({ socketId: socket.id, givenName });
+    io.emit('getAllConnected', allConnected);
+  });
 
   socket.on('getAllMessages', async () => {
     const getting = await clientsModel.getAllTheMessages();
-    io.emit('getAllMessages', getting)
+    io.emit('getAllMessages', getting);
   });
 
   socket.on('newMessage', async (message) => {
     await clientsModel.insertOneMessage(message);
-    io.broadcast.emit('chatMessage', message);
+    socket.broadcast.emit('chatMessage', message);
   });
 
-  socket.on('disconnect', () => console.log(`${socket.id} disconnected`));
+  socket.on('disconnect', () => {
+    allConnected.filter(({ socketId }) => socketId !== socket.id);
+    io.emit('getAllConnected', allConnected)
+    console.log(`${socket.id} disconnected`);
+  });
 
   socket.on('resetDB', async () => {
     await clientsModel.resetDb();
