@@ -41,11 +41,10 @@ io.on('connection', (socket) => {
 
   socket.on('disconnect', () => {
     allConnected = allConnected.filter(({ socketId }) => socketId !== socket.id);
-    const filtered = allConnected.filter(({ socketId }) => socketId === socket.id);
-    socket.broadcast.emit('getAllConnected', filtered);
     io.emit('chatMessage', `${socket.id} se desconectou`);
-    // io.emit('getAllConnected', filtered);
+    (async() => await clientsModel.insertOneMessage(`${socket.id} se desconectou`))();
     console.log(`${socket.id} disconnected`);
+    io.emit('getAllConnected', allConnected);
   });
 
   socket.on('resetDB', async () => {
