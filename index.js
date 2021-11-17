@@ -36,7 +36,7 @@ io.on('connection', (socket) => {
 
   socket.on('newMessage', async (message) => {
     await clientsModel.insertOneMessage(message);
-    io.emit('chatMessage', (message) => console.log(message));
+    io.emit('chatMessage', message);
   });
 
   socket.on('disconnect', () => console.log(`${socket.id} disconnected`));
