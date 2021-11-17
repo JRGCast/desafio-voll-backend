@@ -25,13 +25,15 @@ io.on('connection', (socket) => {
 
   socket.on('setName', (givenName) => {
     socket.emit('setName', (givenName));
+    (async () => await clientsModel.insertOneMessage(`${givenName} se conectou ao chat`))();
     allConnected.push({ socketId: socket.id, givenName });
+    io.emit('chatMessage', `${givenName} se conectou ao chat`);
     io.emit('getAllConnected', allConnected);
   });
 
   socket.on('getAllMessages', async () => {
     const getting = await clientsModel.getAllTheMessages();
-    io.emit('getAllMessages', getting);
+    socket.emit('getAllMessages', getting);
   });
 
   socket.on('newMessage', async (message) => {
@@ -40,9 +42,10 @@ io.on('connection', (socket) => {
   });
 
   socket.on('disconnect', () => {
+    const currGivenName = allConnected.find(({ socketId }) => socketId === socket.id).givenName;
     allConnected = allConnected.filter(({ socketId }) => socketId !== socket.id);
-    io.emit('chatMessage', `${socket.id} se desconectou`);
-    (async() => await clientsModel.insertOneMessage(`${socket.id} se desconectou`))();
+    (async () => await clientsModel.insertOneMessage(`${currGivenName} se desconectou do chat`))();
+    io.emit('chatMessage', `${currGivenName} se desconectou do chat`);
     console.log(`${socket.id} disconnected`);
     io.emit('getAllConnected', allConnected);
   });
