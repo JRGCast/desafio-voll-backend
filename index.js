@@ -15,11 +15,9 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// app.get('/', (_req, res) => res.send(`Server OK! Port:${(PORT)} `))
-
 server.listen(PORT, console.log(`Server running on port: ${(PORT)} `.green));
 
-const allConnected = [];
+let allConnected = [];
 
 io.on('connection', (socket) => {
   console.log(`new Connection from: ${socket.id}`);
@@ -42,11 +40,11 @@ io.on('connection', (socket) => {
   });
 
   socket.on('disconnect', () => {
-    allConnected.filter(({ socketId }) => socketId !== socket.id);
-    console.log('filter', allConnected.filter(({ socketId }) => socketId !== socket.id));
-    const filtered = allConnected.filter(({ socketId }) => socketId === socket.id)
-    io.emit('getAllConnected', filtered)
-    io.emit('chatMessage', `${socket.id} se desconectou`)
+    allConnected = allConnected.filter(({ socketId }) => socketId !== socket.id);
+    const filtered = allConnected.filter(({ socketId }) => socketId === socket.id);
+    socket.broadcast.emit('getAllConnected', filtered);
+    io.emit('chatMessage', `${socket.id} se desconectou`);
+    // io.emit('getAllConnected', filtered);
     console.log(`${socket.id} disconnected`);
   });
 
