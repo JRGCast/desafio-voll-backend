@@ -1,0 +1,1 @@
+Removido do heroku, depois refazer com strapi e redis
